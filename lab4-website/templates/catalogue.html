@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Complete Book Catalogue</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        h1 {
+            color: #243b55;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .catalogue-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #e0e5eb;
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #243b55;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f3f7;
+        }
+
+        td img {
+            width: 65px;
+            height: 85px;
+            object-fit: contain;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 20px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #1e40af;
+        }
+
+        .count {
+            color: #64748b;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 700px) {
+
+            body {
+                margin: 20px auto;
+                padding: 0 12px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>Complete Book Catalogue</h1>
+
+    <p class="description">
+        Browse all books with their authors, publishers and categories.
+    </p>
+
+    <p class="count">
+        Total Books: {{ books|length }}
+    </p>
+
+    <div class="catalogue-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Book ID</th>
+                    <th>Cover</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Publisher</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Year</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for book in books %}
+
+                <tr>
+
+                    <td>{{ book.book_id }}</td>
+
+                    <td>
+
+                        {% if book.cover_filename %}
+
+                            <img
+                                src="{{ url_for('static', filename='uploads/' ~ book.cover_filename) }}"
+                                alt="{{ book.title }}"
+                            >
+
+                        {% else %}
+
+                            No Cover
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>{{ book.title }}</td>
+
+                    <td>{{ book.author_name }}</td>
+
+                    <td>{{ book.publisher_name }}</td>
+
+                    <td>{{ book.category_name }}</td>
+
+                    <td>{{ book.price }}</td>
+
+                    <td>{{ book.publish_year }}</td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="8">
+                        No books available.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <br>
+
+    <a href="{{ url_for('library') }}" class="btn">
+        Back to Library
+    </a>
+
+</body>
+
+</html>

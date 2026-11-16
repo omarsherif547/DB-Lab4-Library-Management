@@ -1,0 +1,22 @@
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+**/.venv/
+**/venv/
+
+# Environment variables and secrets
+**/.env
+**/.env.*
+!**/.env.example
+
+# Flask session storage
+**/session_cache/
+
+# IDE and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

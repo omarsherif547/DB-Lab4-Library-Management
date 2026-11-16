@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Library Loans</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f4f6f9;
+            color: #243b55;
+        }
+
+        h1, h2 {
+            color: #243b55;
+        }
+
+        .report-section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #e0e5eb;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #243b55;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f3f7;
+        }
+
+        .empty {
+            color: #64748b;
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 20px;
+            background: #243b55;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .btn:hover {
+            background: #1d3045;
+        }
+
+        .count {
+            color: #64748b;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 700px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Library Loans</h1>
+
+    <p>Loan status and borrowing activity reports.</p>
+
+
+    <!-- REPORT 1: UNRETURNED LOANS -->
+
+    <section class="report-section">
+
+        <h2>1. Loans Not Returned Yet</h2>
+
+        <p class="count">
+            Active Loans: {{ active_loans|length }}
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Book Title</th>
+                    <th>Member Name</th>
+                    <th>Loan Date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for loan in active_loans %}
+
+                <tr>
+                    <td>{{ loan.loan_id }}</td>
+                    <td>{{ loan.book_title }}</td>
+                    <td>{{ loan.member_name }}</td>
+                    <td>{{ loan.loan_date }}</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="4" class="empty">
+                        No unreturned loans found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </section>
+
+
+    <!-- REPORT 2: MEMBERS WITHOUT LOANS -->
+
+    <section class="report-section">
+
+        <h2>2. Members Who Never Borrowed a Book</h2>
+
+        <p class="count">
+            Members Without Loans: {{ members_without_loans|length }}
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Member ID</th>
+                    <th>Member Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for member in members_without_loans %}
+
+                <tr>
+                    <td>{{ member.member_id }}</td>
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.email }}</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="3" class="empty">
+                        All members have borrowed books.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </section>
+
+
+    <!-- REPORT 3: BOOKS NEVER BORROWED -->
+
+    <section class="report-section">
+
+        <h2>3. Books That Were Never Borrowed</h2>
+
+        <p class="count">
+            Books Never Borrowed: {{ books_never_borrowed|length }}
+        </p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Book ID</th>
+                    <th>Book Title</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for book in books_never_borrowed %}
+
+                <tr>
+                    <td>{{ book.book_id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.price }}</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="3" class="empty">
+                        All books have been borrowed.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+        </table>
+
+    </section>
+
+
+    <br>
+
+    <a href="{{ url_for('library') }}" class="btn">
+        Back to Library
+    </a>
+
+</body>
+</html>

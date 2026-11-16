@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Authors and Books</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f4f6f9;
+            color: #243b55;
+        }
+
+        h1, h2 {
+            color: #243b55;
+        }
+
+        .report-section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #e0e5eb;
+            padding: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: #243b55;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f3f7;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 20px;
+            background: #243b55;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        @media (max-width: 700px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Authors and Books</h1>
+
+    <p>Author statistics and books published by authors
+       and publishers from the same country.</p>
+
+
+    <!-- REPORT 1: ALL AUTHORS -->
+
+    <section class="report-section">
+
+        <h2>1. Every Author and Number of Books</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Author ID</th>
+                    <th>Author Name</th>
+                    <th>Country</th>
+                    <th>Number of Books</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for author in author_reports %}
+
+                <tr>
+                    <td>{{ author.author_id }}</td>
+                    <td>{{ author.author_name }}</td>
+                    <td>{{ author.country }}</td>
+                    <td>{{ author.total_books }}</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="4" class="empty">
+                        No authors found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- REPORT 2: SAME COUNTRY -->
+
+    <section class="report-section">
+
+        <h2>2. Books Whose Author and Publisher
+            Come From the Same Country</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Book ID</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Author Country</th>
+                    <th>Publisher</th>
+                    <th>Publisher Country</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for book in matching_books %}
+
+                <tr>
+                    <td>{{ book.book_id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author_name }}</td>
+                    <td>{{ book.author_country }}</td>
+                    <td>{{ book.publisher_name }}</td>
+                    <td>{{ book.publisher_country }}</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="6" class="empty">
+                        No matching books found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <br>
+
+    <a href="{{ url_for('library') }}" class="btn">
+        Back to Library
+    </a>
+
+</body>
+</html>

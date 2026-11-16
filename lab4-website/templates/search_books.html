@@ -1,0 +1,552 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Search Books | Library Management</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <a href="{{ url_for('library') }}" class="brand">
+
+            <div class="brand-mark">
+                LB
+            </div>
+
+            <div>
+                <span class="brand-name">LIBRARY</span>
+                <span class="brand-subtitle">Management System</span>
+            </div>
+
+        </a>
+
+
+        <div class="nav-label">MAIN MENU</div>
+
+        <nav class="sidebar-nav">
+
+            <a href="{{ url_for('library') }}"
+               class="side-link">
+
+                <span class="nav-icon">⌂</span>
+                Dashboard
+
+            </a>
+
+            <a href="{{ url_for('search_books') }}"
+               class="side-link active">
+
+                <span class="nav-icon">⌕</span>
+                Search Books
+
+            </a>
+
+            <a href="{{ url_for('catalogue') }}"
+               class="side-link">
+
+                <span class="nav-icon">▤</span>
+                Complete Catalogue
+
+            </a>
+
+        </nav>
+
+
+        <div class="nav-label">MANAGEMENT</div>
+
+        <nav class="sidebar-nav">
+
+            <a href="{{ url_for('add_book') }}"
+               class="side-link">
+
+                <span class="nav-icon">＋</span>
+                Add Book
+
+            </a>
+
+            <a href="{{ url_for('add_author') }}"
+               class="side-link">
+
+                <span class="nav-icon">♙</span>
+                Add Author
+
+            </a>
+
+        </nav>
+
+
+        <div class="nav-label">REPORTS</div>
+
+        <nav class="sidebar-nav">
+
+            <a href="{{ url_for('reports') }}"
+               class="side-link">
+
+                <span class="nav-icon">▥</span>
+                Library Reports
+
+            </a>
+
+            <a href="{{ url_for('loans') }}"
+               class="side-link">
+
+                <span class="nav-icon">⇄</span>
+                Loans Reports
+
+            </a>
+
+            <a href="{{ url_for('most_borrowed') }}"
+               class="side-link">
+
+                <span class="nav-icon">★</span>
+                Most Borrowed
+
+            </a>
+
+            <a href="{{ url_for('authors_books') }}"
+               class="side-link">
+
+                <span class="nav-icon">◎</span>
+                Authors and Books
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <form action="{{ url_for('logout') }}"
+                  method="POST"
+                  class="logout-form">
+
+                <button type="submit"
+                        class="button button-danger"
+                        style="width:100%;">
+
+                    ↪ &nbsp; Logout
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-area">
+
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div class="breadcrumb">
+                Workspace / <strong>Search Books</strong>
+            </div>
+
+            <div class="user-profile">
+
+    <div class="user-avatar">
+        {{ session.get('name', 'L')[:1]|upper }}
+    </div>
+
+    <span class="user-name">
+        {{ session.get('name', 'Library User') }}
+    </span>
+
+</div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+
+
+            <!-- PAGE HEADING -->
+            <section class="page-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        BOOK DISCOVERY
+                    </div>
+
+                    <h1 class="page-title">
+                        Search Books
+                    </h1>
+
+                    <p class="page-description">
+                        Find books using their title, price range
+                        and category.
+                    </p>
+
+                </div>
+
+                <a href="{{ url_for('catalogue') }}"
+                   class="button button-secondary">
+
+                    View Complete Catalogue
+
+                </a>
+
+            </section>
+
+
+            <!-- SEARCH FORM -->
+            <section class="panel search-panel">
+
+                <div class="search-panel-heading">
+
+                    <h2>
+                        Search Filters
+                    </h2>
+
+                    <p>
+                        Enter a book title to start searching.
+                        Other filters are optional.
+                    </p>
+
+                </div>
+
+
+                <form method="GET"
+                      action="{{ url_for('search_books') }}">
+
+
+                    <div class="form-grid">
+
+
+                        <!-- BOOK TITLE -->
+                        <div class="form-field form-field-full">
+
+                            <label for="keyword">
+
+                                Book Title
+                                <span class="required-mark">*</span>
+
+                            </label>
+
+                            <input
+                                type="text"
+                                id="keyword"
+                                name="keyword"
+                                placeholder="Enter the book title..."
+                                value="{{ keyword }}"
+                                required
+                                autocomplete="off"
+                            >
+
+                            <p class="form-hint">
+                                Required field. You can enter the complete
+                                title or just part of it.
+                            </p>
+
+                        </div>
+
+
+                        <!-- MINIMUM PRICE -->
+                        <div class="form-field">
+
+                            <label for="min_price">
+                                Minimum Price
+                            </label>
+
+                            <input
+                                type="number"
+                                id="min_price"
+                                name="min_price"
+                                min="0"
+                                step="0.01"
+                                placeholder="Enter minimum price"
+                                value="{{ min_price }}"
+                            >
+
+                        </div>
+
+
+                        <!-- MAXIMUM PRICE -->
+                        <div class="form-field">
+
+                            <label for="max_price">
+                                Maximum Price
+                            </label>
+
+                            <input
+                                type="number"
+                                id="max_price"
+                                name="max_price"
+                                min="0"
+                                step="0.01"
+                                placeholder="Enter maximum price"
+                                value="{{ max_price }}"
+                            >
+
+                        </div>
+
+
+                        <!-- CATEGORY -->
+                        <div class="form-field form-field-full">
+
+                            <label for="category_id">
+                                Category
+                            </label>
+
+                            <select id="category_id"
+                                    name="category_id">
+
+                                <option value="">
+                                    All Categories
+                                </option>
+
+                                {% for category in categories %}
+
+                                    <option
+                                        value="{{ category.category_id }}"
+
+                                        {% if selected_category|string == category.category_id|string %}
+                                            selected
+                                        {% endif %}
+                                    >
+
+                                        {{ category.name }}
+
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- FORM BUTTONS -->
+                    <div class="form-actions">
+
+                        <button type="submit"
+                                class="button button-primary">
+
+                            ⌕ &nbsp; Search Books
+
+                        </button>
+
+                        <a href="{{ url_for('search_books') }}"
+                           class="button button-light">
+
+                            Clear Filters
+
+                        </a>
+
+                    </div>
+
+
+                </form>
+
+            </section>
+
+
+            <!-- ERROR MESSAGES -->
+            {% if errors %}
+
+                {% for error in errors %}
+
+                    <div class="alert alert-error">
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+
+            <!-- SEARCH RESULTS -->
+            <section class="content-section">
+
+                <div class="results-heading">
+
+                    <div>
+
+                        <h2>
+                            Search Results
+                        </h2>
+
+                        <p class="results-info">
+
+                            Found {{ books|length }} book(s).
+
+                            {% if books %}
+                                Results sorted by lowest price first.
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+                    <span class="count-badge">
+                        {{ books|length }} Results
+                    </span>
+
+                </div>
+
+
+                <!-- RESULTS TABLE -->
+                <div class="panel">
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Book ID</th>
+                                    <th>Cover</th>
+                                    <th>Book Title</th>
+                                    <th>Author</th>
+                                    <th>Publisher</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Year</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for book in books %}
+
+                                <tr>
+
+                                    <td class="table-id">
+                                        #{{ book.book_id }}
+                                    </td>
+
+
+                                    <!-- COVER -->
+                                    <td>
+
+                                        {% if book.cover_filename %}
+
+                                            <img
+                                                src="{{ url_for('static', filename='uploads/' ~ book.cover_filename) }}"
+                                                alt="Cover of {{ book.title }}"
+                                                class="book-cover"
+                                                loading="lazy"
+                                            >
+
+                                        {% else %}
+
+                                            <div class="no-cover">
+                                                No Cover
+                                            </div>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <td class="table-primary-text">
+                                        {{ book.title }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ book.author_name }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ book.publisher_name }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ book.category_name }}
+                                    </td>
+
+
+                                    <td class="price-text">
+                                        {{ book.price }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ book.publish_year }}
+                                    </td>
+
+                                </tr>
+
+
+                                {% else %}
+
+                                <tr>
+
+                                    <td colspan="8"
+                                        class="empty-state">
+
+                                        {% if errors %}
+                                            Please correct the search filters.
+                                        {% else %}
+                                            No books found. Try another title.
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- BACK TO DASHBOARD -->
+            <div style="margin-top:25px;">
+
+                <a href="{{ url_for('library') }}"
+                   class="button button-secondary">
+
+                    ← Back to Dashboard
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

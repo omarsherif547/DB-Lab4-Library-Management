@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Most Borrowed Books</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f4f6f9;
+            color: #243b55;
+        }
+
+        h1, h2 {
+            color: #243b55;
+        }
+
+        .report-section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #e0e5eb;
+            padding: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: #243b55;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f3f7;
+        }
+
+        .top-member {
+            background: #eef3f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .top-member h3 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #64748b;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 20px;
+            background: #243b55;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        @media (max-width: 700px) {
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Most Borrowed</h1>
+
+    <p>Library borrowing statistics.</p>
+
+
+    <!-- REPORT 1: TOP 3 BOOKS -->
+
+    <section class="report-section">
+
+        <h2>1. Top 3 Most Borrowed Books</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Book ID</th>
+                    <th>Book Title</th>
+                    <th>Total Loans</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for book in top_books %}
+
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ book.book_id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.total_loans }}</td>
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="4" class="empty">
+                        No borrowing records found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- REPORT 2: TOP MEMBER -->
+
+    <section class="report-section">
+
+        <h2>2. Member With the Most Loans</h2>
+
+        {% if top_member %}
+
+        <div class="top-member">
+
+            <h3>{{ top_member.name }}</h3>
+
+            <p>
+                Member ID: {{ top_member.member_id }}
+            </p>
+
+            <p>
+                Total Loans:
+                <strong>{{ top_member.total_loans }}</strong>
+            </p>
+
+        </div>
+
+        {% else %}
+
+        <p class="empty">
+            No borrowing records found.
+        </p>
+
+        {% endif %}
+
+    </section>
+
+
+    <br>
+
+    <a href="{{ url_for('library') }}" class="btn">
+        Back to Library
+    </a>
+
+</body>
+</html>

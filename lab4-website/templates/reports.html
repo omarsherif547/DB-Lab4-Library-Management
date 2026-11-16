@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Library Reports</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background: #f4f6f9;
+            color: #243b55;
+        }
+
+        h1, h2 {
+            color: #243b55;
+        }
+
+        .report-section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #e0e5eb;
+            padding: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: #243b55;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f3f7;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .summary-card {
+            background: #eef3f8;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .summary-card p {
+            color: #64748b;
+        }
+
+        .summary-card h3 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 20px;
+            background: #243b55;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        @media (max-width: 700px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Library Reports</h1>
+    <p>Statistics and analytical reports for the library.</p>
+
+    <!-- REPORT 1 -->
+
+    <section class="report-section">
+
+        <h2>1. Books and Average Price by Category</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Category ID</th>
+                    <th>Category Name</th>
+                    <th>Number of Books</th>
+                    <th>Average Price</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for report in category_reports %}
+                <tr>
+                    <td>{{ report.category_id }}</td>
+                    <td>{{ report.category_name }}</td>
+                    <td>{{ report.total_books }}</td>
+                    <td>{{ "%.2f"|format(report.average_price or 0) }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">No categories found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </section>
+
+
+    <!-- REPORT 2 -->
+
+    <section class="report-section">
+
+        <h2>2. Authors Who Wrote at Least Two Books</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Author ID</th>
+                    <th>Author Name</th>
+                    <th>Number of Books</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for report in author_reports %}
+                <tr>
+                    <td>{{ report.author_id }}</td>
+                    <td>{{ report.author_name }}</td>
+                    <td>{{ report.total_books }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3">
+                        No authors found with at least two books.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </section>
+
+
+    <!-- REPORT 3 -->
+
+    <section class="report-section">
+
+        <h2>3. Library Price Summary</h2>
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <p>Total Price (SUM)</p>
+                <h3>
+                    {{ "%.2f"|format(price_summary.total_price or 0) }}
+                </h3>
+            </div>
+
+            <div class="summary-card">
+                <p>Smallest Price (MIN)</p>
+                <h3>
+                    {{ "%.2f"|format(price_summary.smallest_price or 0) }}
+                </h3>
+            </div>
+
+            <div class="summary-card">
+                <p>Largest Price (MAX)</p>
+                <h3>
+                    {{ "%.2f"|format(price_summary.largest_price or 0) }}
+                </h3>
+            </div>
+
+        </div>
+
+    </section>
+
+    <a href="{{ url_for('library') }}" class="btn">
+        Back to Library
+    </a>
+
+</body>
+</html>
