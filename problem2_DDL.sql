@@ -1,9 +1,3 @@
-
--- ==========================================
--- LAB 4 - PART II
--- DATABASE: REGISTRATION
--- ==========================================
-
 CREATE DATABASE IF NOT EXISTS registration;
 USE registration;
 
@@ -148,7 +142,3 @@ CREATE TABLE LOAN (
         ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
-
--- ==========================================
--- END OF DDL
--- ==========================================

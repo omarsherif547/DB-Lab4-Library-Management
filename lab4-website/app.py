@@ -328,12 +328,7 @@ def search_books():
     min_price_input = request.args.get("min_price", "").strip()
     max_price_input = request.args.get("max_price", "").strip()
     category_input = request.args.get("category_id", "").strip()
-
-    # Detect whether the user submitted the search form.
-    # When the page first opens, request.args is empty.
     search_submitted = bool(request.args)
-
-    # Require a title only after submitting the search form.
     if search_submitted and not keyword:
         errors.append("Please enter a book title.")
 
@@ -341,8 +336,6 @@ def search_books():
 
     try:
         with connection.cursor() as cursor:
-
-            # Get categories for the search form
             cursor.execute(
                 """
                 SELECT category_id, name
@@ -361,12 +354,10 @@ def search_books():
             conditions = []
             params = []
 
-            # 1. Search by title using LIKE
             if keyword:
                 conditions.append("B.title LIKE %s")
                 params.append(f"%{keyword}%")
 
-            # 2. Validate minimum price
             min_price = None
             max_price = None
 
@@ -383,7 +374,6 @@ def search_books():
                 except ValueError:
                     errors.append("Invalid minimum price.")
 
-            # 3. Validate maximum price
             if max_price_input:
 
                 try:
@@ -397,7 +387,6 @@ def search_books():
                 except ValueError:
                     errors.append("Invalid maximum price.")
 
-            # 4. Filter using BETWEEN
             if min_price is not None and max_price is not None:
 
                 if min_price > max_price:
@@ -422,7 +411,6 @@ def search_books():
                 conditions.append("B.price <= %s")
                 params.append(max_price)
 
-            # 5. Filter by category
             if category_input:
 
                 if (
@@ -435,7 +423,6 @@ def search_books():
                     conditions.append("B.category_id = %s")
                     params.append(int(category_input))
 
-            # 6. Execute search query
             if not errors:
 
                 sql = """
@@ -468,7 +455,6 @@ def search_books():
                     ORDER BY B.price ASC, B.title ASC
                 """
 
-                # Prepared statement: values are passed separately.
                 cursor.execute(sql, tuple(params))
 
                 books = cursor.fetchall()
@@ -705,24 +691,20 @@ def edit_author(author_id):
                 photo is not None and bool(photo.filename.strip())
             )
 
-            # Validate author name
             if not name:
                 errors.append("Author name is required.")
             elif len(name) > 100:
                 errors.append("Author name cannot exceed 100 characters.")
 
-            # Validate country
             if not country:
                 errors.append("Country is required.")
             elif len(country) > 50:
                 errors.append("Country cannot exceed 50 characters.")
 
-            # Preserve the old photo by default
             old_photo = author.get("photo_filename")
             new_photo_filename = old_photo
             safe_name = None
 
-            # Validate new photo if uploaded
             if has_photo:
 
                 if not allowed_image(photo.filename):
@@ -742,7 +724,6 @@ def edit_author(author_id):
 
                 try:
 
-                    # Save the new image first
                     if has_photo:
 
                         saved_filename = (
@@ -758,7 +739,6 @@ def edit_author(author_id):
 
                         new_photo_filename = saved_filename
 
-                    # Update database
                     with connection.cursor() as cursor:
 
                         cursor.execute(
@@ -779,7 +759,6 @@ def edit_author(author_id):
 
                     connection.commit()
 
-                    # Delete old photo ONLY after successful update
                     if (
                         has_photo
                         and old_photo
@@ -793,7 +772,7 @@ def edit_author(author_id):
 
                     connection.rollback()
 
-                    # Remove newly uploaded image if update fails
+                
                     if saved_filename:
                         delete_uploaded_file(saved_filename)
 
@@ -808,13 +787,13 @@ def edit_author(author_id):
 
                     connection.rollback()
 
-                    # Remove newly uploaded image if anything fails
+                   
                     if saved_filename:
                         delete_uploaded_file(saved_filename)
 
                     raise
 
-            # Preserve entered information if validation fails
+            
             author["name"] = name
             author["country"] = country
 
@@ -845,7 +824,6 @@ def delete_author(author_id):
     try:
         with connection.cursor() as cursor:
 
-            # Get author's photo
             cursor.execute(
                 """
                 SELECT photo_filename
@@ -864,7 +842,6 @@ def delete_author(author_id):
                         author["photo_filename"]
                     )
 
-                # Get covers of all books belonging to this author
                 cursor.execute(
                     """
                     SELECT cover_filename
@@ -882,8 +859,6 @@ def delete_author(author_id):
                             book["cover_filename"]
                         )
 
-                # Delete author from database
-                # Related books must use ON DELETE CASCADE
                 cursor.execute(
                     """
                     DELETE FROM AUTHOR
@@ -910,7 +885,6 @@ def delete_author(author_id):
     finally:
         connection.close()
 
-    # Delete images only after successful database deletion
     for filename in image_filenames:
         delete_uploaded_file(filename)
 
@@ -966,12 +940,10 @@ def add_book():
             cover = request.files.get("cover_image")
             has_cover = cover is not None and bool(cover.filename.strip())
 
-            # Validate Book ID
 
             if not book_id_input.isdigit() or int(book_id_input) < 1:
                 errors.append("Book ID must be a positive number.")
 
-            # Validate title
 
             if not title:
                 errors.append("Book title is required.")
@@ -979,7 +951,6 @@ def add_book():
             elif len(title) > 100:
                 errors.append("Book title cannot exceed 100 characters.")
 
-            # Validate price
 
             price = None
 
@@ -992,8 +963,6 @@ def add_book():
             except ValueError:
                 errors.append("Enter a valid price.")
 
-            # Validate publication year
-
             publish_year = None
 
             if not year_input.isdigit():
@@ -1005,7 +974,6 @@ def add_book():
                 if publish_year < 1 or publish_year > 2100:
                     errors.append("Enter a valid publication year.")
 
-            # Validate foreign keys
 
             author_ids = {a["author_id"] for a in authors}
             publisher_ids = {p["publisher_id"] for p in publishers}
@@ -1020,7 +988,6 @@ def add_book():
             if not category_input.isdigit() or int(category_input) not in category_ids:
                 errors.append("Please select a valid category.")
 
-            # Validate cover image
 
             safe_name = None
 
@@ -1034,8 +1001,6 @@ def add_book():
 
                     if not safe_name:
                         errors.append("Invalid cover filename.")
-
-            # Insert book
 
             if not errors:
 

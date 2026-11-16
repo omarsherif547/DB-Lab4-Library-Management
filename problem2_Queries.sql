@@ -1,8 +1,6 @@
-
 USE registration;
 
 -- F2.2
--- Complete Catalogue
 
 SELECT
     B.book_id,
@@ -32,7 +30,6 @@ ORDER BY B.title ASC;
 -- ==========================================
 
 -- F2.3 (a)
--- Number of books and average price of each category
 
 SELECT
     C.category_id,
@@ -51,7 +48,6 @@ GROUP BY
 
 
 -- F2.3 (b)
--- Authors who wrote at least 2 books
 
 SELECT
     A.author_id,
@@ -71,7 +67,6 @@ HAVING COUNT(B.book_id) >= 2;
 
 
 -- F2.3 (c)
--- Total, smallest and largest price of the whole library
 
 SELECT
     SUM(price) AS total_price,
@@ -86,7 +81,6 @@ FROM BOOK;
 -- ==========================================
 
 -- F2.4 (a)
--- Loans not returned yet, with book title and member name
 
 SELECT
     L.loan_id,
@@ -106,7 +100,6 @@ WHERE L.return_date IS NULL;
 
 
 -- F2.4 (b)
--- Members who never borrowed a book
 
 SELECT
     M.member_id,
@@ -122,7 +115,6 @@ WHERE L.loan_id IS NULL;
 
 
 -- F2.4 (c)
--- Books that were never borrowed
 
 SELECT
     B.book_id,
@@ -142,7 +134,6 @@ WHERE L.loan_id IS NULL;
 -- ==========================================
 
 -- F2.5 (a)
--- The 3 books with the most loans
 
 SELECT
     B.book_id,
@@ -166,7 +157,6 @@ LIMIT 3;
 
 
 -- F2.5 (b)
--- The member with the most loans
 
 SELECT
     M.member_id,
@@ -193,8 +183,6 @@ LIMIT 1;
 -- ==========================================
 
 -- F2.6 (a)
--- Every author with the number of books,
--- including authors who wrote zero books
 
 SELECT
     A.author_id,
@@ -216,8 +204,6 @@ ORDER BY A.name ASC;
 
 
 -- F2.6 (b)
--- Books whose author and publisher
--- come from the same country
 
 SELECT
     B.book_id,
